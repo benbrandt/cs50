@@ -11,6 +11,8 @@ int main(int argc, string argv[])
     // Check if correct # of arguments given
     if (argc != 2 && !isdigit(argv[1]))
     {
+        printf ("Wrong number of arguments. Please try again.\n");
+        
         return 1;
     }
     
