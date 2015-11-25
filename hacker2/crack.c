@@ -56,26 +56,21 @@ int main(int argc, string argv[])
     // Initialize string to all null characters
     char test[9] = { '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0' };
 
-    // Increment string    
-    for (int i = 0; i < 8; i++)
+    do
     {
-        test[i] = '!';
-        
-        while (test[i] <= '~')
+        // Compares until next null character
+        if (strcmp(crypt(test, salt), argv[1]) == 0)
         {
-            // Compares until next null character
-            if (strcmp(crypt(test, salt), argv[1]) == 0)
-            {
-                // Print password
-                printf("%s\n", test);
-    
-                return 0;
-            }
-            
-            // Increment letter
-            incrementChar(test, 0);
+            // Print password
+            printf("%s\n", test);
+
+            return 0;
         }
+
+        // Increment letter
+        incrementChar(test, 0);
     }
+    while (test[8] == '\0');
 
     printf("Password not found\n");
 
@@ -85,14 +80,14 @@ int main(int argc, string argv[])
 // Function to increment character and carry over if necessary
 void incrementChar(char string[], int index)
 {
-    if (string[index] == '~')
+    if (string[index] == '\0')
     {
         string[index] = '!';
-
-        if (index < 7)
-        {
-            incrementChar(string, index + 1);
-        }
+    }
+    else if (string[index] == '~')
+    {
+        string[index] = '!';
+        incrementChar(string, index + 1);
     }
     else
     {
