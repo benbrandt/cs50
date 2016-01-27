@@ -22,15 +22,37 @@ bool search(int value, int values[], int n)
         return false;
     }
     
-    // Linear search through array
-    for (int i = 0; i < n; i++)
+    // Set initial min and max values
+    int min = 0, max = n - 1;
+    
+    // While there are still elements in the list
+    while (n > 0)
     {
-        if (values[i] == value)
+        // Set middle to half of difference between min and max
+        int middle = (max - min) / 2 + min;
+        
+        // If value is middle value, return true
+        if (values[middle] == value)
         {
             return true;
         }
+        // If value is less than middle, set max to one less than middle
+        else if (values[middle] > value)
+        {
+            max = middle - 1;
+        }
+        
+        // If value is greater than middle, set min to one greater than middle
+        else if (values[middle] < value)
+        {
+            min = middle + 1;
+        }
+        
+        // Set new number of elements to those between min and max
+        n = max - min + 1;
     }
     
+    // If number is not found, return false
     return false;
 }
 
