@@ -120,11 +120,11 @@ int main(int argc, string argv[])
         if (!move(tile))
         {
             printf("\nIllegal move.\n");
-            usleep(500000);
+            usleep(50000);
         }
 
         // sleep thread for animation's sake
-        usleep(500000);
+        usleep(50000);
     }
     
     // close log
@@ -150,7 +150,7 @@ void greet(void)
 {
     clear();
     printf("WELCOME TO GAME OF FIFTEEN\n");
-    usleep(2000000);
+    usleep(200000);
 }
 
 /**
@@ -159,7 +159,25 @@ void greet(void)
  */
 void init(void)
 {
-    // TODO
+    // Get Total number of spaces
+    int total = d * d;
+    
+    // Add tiles to board
+    for (int i = 0; i < d; i++)
+    {
+        for (int j = 0; j < d; j++)
+        {
+            // Decrement value by one and assign to array
+            board[i][j] = --total;
+        }
+    }
+    
+    // Swap 2 and 1 if even number of spaces
+    if ((d * d) % 2 == 0)
+    {
+        board[d - 1][d - 3] = 1;
+        board[d - 1][d - 2] = 2;
+    }
 }
 
 /**
@@ -167,7 +185,24 @@ void init(void)
  */
 void draw(void)
 {
-    // TODO
+    // Loop through board array
+    for (int i = 0; i < d; i++)
+    {
+        for (int j = 0; j < d; j++)
+        {
+            // Print line instead of zero
+            if (board[i][j] == 0)
+            {
+                printf("  _");
+            }
+            else 
+            {
+                printf("%3i", board[i][j]);
+            }
+        }
+        
+        printf("\n\n");
+    }
 }
 
 /**
@@ -176,7 +211,49 @@ void draw(void)
  */
 bool move(int tile)
 {
-    // TODO
+    // Get Total Tiles on board
+    int total = d * d - 1;
+    
+    // Check if valid tile
+    if (tile > total || tile < 1) {
+        return false;
+    }
+    
+    // Get position, row, and column
+    int position = total - tile;
+    int row = 0, column = 0;
+    if (position != 0)
+    {
+        row = position / d;
+        column = position % d;
+    }
+    
+    // Check nearby spaces
+    if (row - 1 >= 0 && board[row - 1][column] == 0)
+    {
+        board[row - 1][column] = board[row][column];
+        board[row][column] = 0;
+        return true;
+    }
+    else if (row + 1 < d && board[row + 1][column] == 0)
+    {
+        board[row + 1][column] = board[row][column];
+        board[row][column] = 0;
+        return true;
+    }
+    else if (column - 1 >= 0 && board[row][column - 1] == 0)
+    {
+        board[row][column - 1] = board[row][column];
+        board[row][column] = 0;
+        return true;
+    }
+    else if (column + 1 < d && board[row][column + 1] == 0)
+    {
+        board[row][column + 1] = board[row][column];
+        board[row][column] = 0;
+        return true;
+    }
+    
     return false;
 }
 
