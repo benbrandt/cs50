@@ -266,6 +266,21 @@ bool move(int tile)
  */
 bool won(void)
 {
-    // TODO
-    return false;
+    // Set counter
+    int counter = 0;
+    
+    // Check each tile to ensure it's in order
+    for (int i = 0; i < d; i++)
+    {
+        for (int j = 0; j < d; j++)
+        {
+            // Check if last spot and if not correct value
+            if (++counter != (d * d) && board[i][j] != counter)
+            {
+                return false;
+            }
+        }
+    }
+    
+    return true;
 }
