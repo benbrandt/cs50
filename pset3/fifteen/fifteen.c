@@ -212,7 +212,8 @@ void draw(void)
 bool move(int tile)
 {
     // Check if valid tile
-    if (tile > d * d - 1 || tile < 1) {
+    if (tile > d * d - 1 || tile < 1) 
+    {
         return false;
     }
     
