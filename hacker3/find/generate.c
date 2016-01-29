@@ -24,17 +24,18 @@
 
 int main(int argc, string argv[])
 {
-    // TODO: comment me
+    // Ensure the proper amount of command line arguments are passed in
     if (argc != 2 && argc != 3)
     {
         printf("Usage: generate n [s]\n");
         return 1;
     }
 
-    // TODO: comment me
+    // Set first argument number of random integers to return
     int n = atoi(argv[1]);
 
-    // TODO: comment me
+    // If seed is present, it sets the seed to that value, otherwise it uses
+    // the current time as a seed value
     if (argc == 3)
     {
         srand48((long int) atoi(argv[2]));
@@ -44,7 +45,8 @@ int main(int argc, string argv[])
         srand48((long int) time(NULL));
     }
 
-    // TODO: comment me
+    // Return n random numbers of value between 0 and 1 and multiply by the 
+    // defined limit of the program
     for (int i = 0; i < n; i++)
     {
         printf("%i\n", (int) (drand48() * LIMIT));
