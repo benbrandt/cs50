@@ -211,21 +211,24 @@ void draw(void)
  */
 bool move(int tile)
 {
-    // Get Total Tiles on board
-    int total = d * d - 1;
-    
     // Check if valid tile
-    if (tile > total || tile < 1) {
+    if (tile > d * d - 1 || tile < 1) {
         return false;
     }
     
-    // Get position, row, and column
-    int position = total - tile;
+    // Search board for row, and column
     int row = 0, column = 0;
-    if (position != 0)
+    
+    for (int i = 0; i < d; i++)
     {
-        row = position / d;
-        column = position % d;
+        for (int j = 0; j < d; j++)
+        {
+            if (board[i][j] == tile)
+            {
+                row = i;
+                column = j;
+            }
+        }
     }
     
     // Check nearby spaces
