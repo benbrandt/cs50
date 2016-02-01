@@ -58,6 +58,13 @@ int main(int argc, string argv[])
         return 2;
     }
 
+    // open log
+    FILE* file = fopen("log.txt", "w");
+    if (file == NULL)
+    {
+        return 3;
+    }
+
     // greet user with instructions
     greet();
 
@@ -73,6 +80,21 @@ int main(int argc, string argv[])
         // draw the current state of the board
         draw();
 
+        // log the current state of the board (for testing)
+        for (int i = 0; i < d; i++)
+        {
+            for (int j = 0; j < d; j++)
+            {
+                fprintf(file, "%i", board[i][j]);
+                if (j < d - 1)
+                {
+                    fprintf(file, "|");
+                }
+            }
+            fprintf(file, "\n");
+        }
+        fflush(file);
+
         // check for win
         if (won())
         {
@@ -83,17 +105,30 @@ int main(int argc, string argv[])
         // prompt for move
         printf("Tile to move: ");
         int tile = GetInt();
+        
+        // quit if user inputs 0 (for testing)
+        if (tile == 0)
+        {
+            break;
+        }
+
+        // log move (for testing)
+        fprintf(file, "%i\n", tile);
+        fflush(file);
 
         // move if possible, else report illegality
         if (!move(tile))
         {
             printf("\nIllegal move.\n");
-            usleep(500000);
+            usleep(50000);
         }
 
         // sleep thread for animation's sake
-        usleep(500000);
+        usleep(50000);
     }
+    
+    // close log
+    fclose(file);
 
     // success
     return 0;
@@ -115,7 +150,7 @@ void greet(void)
 {
     clear();
     printf("WELCOME TO GAME OF FIFTEEN\n");
-    usleep(2000000);
+    usleep(200000);
 }
 
 /**
@@ -124,7 +159,25 @@ void greet(void)
  */
 void init(void)
 {
-    // TODO
+    // Get Total number of spaces
+    int total = d * d;
+    
+    // Add tiles to board
+    for (int i = 0; i < d; i++)
+    {
+        for (int j = 0; j < d; j++)
+        {
+            // Decrement value by one and assign to array
+            board[i][j] = --total;
+        }
+    }
+    
+    // Swap 2 and 1 if even number of spaces
+    if ((d * d) % 2 == 0)
+    {
+        board[d - 1][d - 3] = 1;
+        board[d - 1][d - 2] = 2;
+    }
 }
 
 /**
@@ -132,7 +185,24 @@ void init(void)
  */
 void draw(void)
 {
-    // TODO
+    // Loop through board array
+    for (int i = 0; i < d; i++)
+    {
+        for (int j = 0; j < d; j++)
+        {
+            // Print line instead of zero
+            if (board[i][j] == 0)
+            {
+                printf("  _");
+            }
+            else 
+            {
+                printf("%3i", board[i][j]);
+            }
+        }
+        
+        printf("\n\n");
+    }
 }
 
 /**
@@ -141,7 +211,53 @@ void draw(void)
  */
 bool move(int tile)
 {
-    // TODO
+    // Check if valid tile
+    if (tile > d * d - 1 || tile < 1) 
+    {
+        return false;
+    }
+    
+    // Search board for row, and column
+    int row = 0, column = 0;
+    
+    for (int i = 0; i < d; i++)
+    {
+        for (int j = 0; j < d; j++)
+        {
+            if (board[i][j] == tile)
+            {
+                row = i;
+                column = j;
+            }
+        }
+    }
+    
+    // Check nearby spaces
+    if (row - 1 >= 0 && board[row - 1][column] == 0)
+    {
+        board[row - 1][column] = board[row][column];
+        board[row][column] = 0;
+        return true;
+    }
+    else if (row + 1 < d && board[row + 1][column] == 0)
+    {
+        board[row + 1][column] = board[row][column];
+        board[row][column] = 0;
+        return true;
+    }
+    else if (column - 1 >= 0 && board[row][column - 1] == 0)
+    {
+        board[row][column - 1] = board[row][column];
+        board[row][column] = 0;
+        return true;
+    }
+    else if (column + 1 < d && board[row][column + 1] == 0)
+    {
+        board[row][column + 1] = board[row][column];
+        board[row][column] = 0;
+        return true;
+    }
+    
     return false;
 }
 
@@ -151,6 +267,21 @@ bool move(int tile)
  */
 bool won(void)
 {
-    // TODO
-    return false;
+    // Set counter
+    int counter = 0;
+    
+    // Check each tile to ensure it's in order
+    for (int i = 0; i < d; i++)
+    {
+        for (int j = 0; j < d; j++)
+        {
+            // Check if last spot and if not correct value
+            if (++counter != (d * d) && board[i][j] != counter)
+            {
+                return false;
+            }
+        }
+    }
+    
+    return true;
 }
