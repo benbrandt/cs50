@@ -18,3 +18,8 @@ bool search(int value, int values[], int n);
  * Sorts array of n values.
  */
 void sort(int values[], int n);
+
+/**
+ * Merges two sorted arrays
+ */
+void merge(int values[], int left[], int right[], int middle, int total);
