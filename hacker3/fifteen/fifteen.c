@@ -32,12 +32,22 @@ int board[DIM_MAX][DIM_MAX];
 // dimensions
 int d;
 
+// current position
+struct coord {
+    int row;
+    int column;
+};
+
 // prototypes
 void clear(void);
 void greet(void);
 void init(void);
 void draw(void);
+struct coord findPosition(int tile);
+struct coord findEndPosition(int tile);
 bool move(int tile);
+void move_space(char direction);
+void align (int tile);
 bool won(void);
 
 int main(int argc, string argv[])
@@ -101,7 +111,7 @@ int main(int argc, string argv[])
             printf("ftw!\n");
             break;
         }
-
+        
         // prompt for move
         printf("Tile to move: ");
         int tile = GetInt();
@@ -109,7 +119,8 @@ int main(int argc, string argv[])
         // quit if user inputs 0 (for testing)
         if (tile == 0)
         {
-            break;
+            align(6);
+            //break;
         }
 
         // log move (for testing)
@@ -206,6 +217,43 @@ void draw(void)
 }
 
 /**
+ * loop through board to find position of tile you are looking for
+ */
+struct coord findPosition(int tile)
+{
+    struct coord position;
+    
+    // Search board for row, and column
+    for (int i = 0; i < d; i++)
+    {
+        for (int j = 0; j < d; j++)
+        {
+            if (board[i][j] == tile)
+            {
+                position.row = i;
+                position.column = j;
+            }
+        }
+    }
+    
+    return position;
+}
+
+/**
+ * Find the position the tile should be at
+ */
+struct coord findEndPosition(int tile)
+{
+    struct coord position;
+    
+    // Get row and column based on d
+    position.row = (tile - 1) / d;
+    position.column = (tile - 1) % d;
+    
+    return position;
+}
+
+/**
  * If tile borders empty space, moves tile and returns true, else
  * returns false. 
  */
@@ -218,19 +266,8 @@ bool move(int tile)
     }
     
     // Search board for row, and column
-    int row = 0, column = 0;
-    
-    for (int i = 0; i < d; i++)
-    {
-        for (int j = 0; j < d; j++)
-        {
-            if (board[i][j] == tile)
-            {
-                row = i;
-                column = j;
-            }
-        }
-    }
+    struct coord position = findPosition(tile);
+    int row = position.row, column = position.column;
     
     // Check nearby spaces
     if (row - 1 >= 0 && board[row - 1][column] == 0)
@@ -259,6 +296,117 @@ bool move(int tile)
     }
     
     return false;
+}
+
+/**
+ * move space tile in some direction
+ */
+void move_space(char direction)
+{
+    struct coord space = findPosition(0);
+    
+    // Utilize the move function to move space tile
+    if (direction == 'u')
+    {
+        move(board[space.row - 1][space.column]);
+    }
+    else if (direction == 'd')
+    {
+        move(board[space.row + 1][space.column]);
+    }
+    else if (direction == 'l')
+    {
+        move(board[space.row][space.column - 1]);
+    }
+    else if (direction == 'r')
+    {
+        move(board[space.row][space.column + 1]);
+    }
+    else {
+        printf("Not a valid move.");
+    }
+    
+    // clear the screen
+    clear();
+
+    // draw the current state of the board
+    draw();
+    
+    // sleep thread for animation's sake
+    usleep(50000);
+}
+
+/**
+ * Move space tile to right of tile you want
+ */
+void align (int tile)
+{
+    // finds space
+    struct coord space = findPosition(0);
+    
+    // finds tile
+    struct coord tilePos = findPosition(tile);
+    
+    // Check if tile on right
+    int side = 1;
+    if (tilePos.column == d - 1)
+    {
+        side = -1;
+    }
+    
+    // Make sure tile is not in same column
+    if (space.column == tilePos.column)
+    {
+        if (side == -1)
+        {
+            move_space('l');
+        }
+        else {
+            move_space('r');
+        }
+    }
+    
+    // moves space to same row as tile
+    while (space.row != tilePos.row)
+    {
+        // If lower on board move up
+        if (space.row > tilePos.row)
+        {
+            move_space('u');
+        }
+        // Else move down
+        else
+        {
+            move_space('d');
+        }
+        
+        space = findPosition(0);
+        tilePos = findPosition(tile);
+    }
+    
+    // Moves space to right of tile
+    while (space.column != tilePos.column + side)
+    {
+        // If right of tile, move left
+        if (space.column > tilePos.column + side)
+        {
+            move_space('l');
+        }
+        // Else move right
+        else
+        {
+            move_space('r');
+        }
+        
+        space = findPosition(0);
+        tilePos = findPosition(tile);
+    }
+    
+    // If on left, swap places
+    if (side == -1)
+    {
+        move(tile);
+    }
 }
 
 /**
