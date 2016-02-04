@@ -51,6 +51,7 @@ void align (int tile);
 bool move_vertical(int tile);
 bool move_horizontal(int tile);
 bool move_diagonal(int tile);
+void move_to_end_pos(int tile);
 void god_mode(void);
 bool won(void);
 
@@ -497,32 +498,48 @@ bool move_diagonal(int tile)
 }
 
 /**
- * God mode
+ * Move tile to it's final position
  */
-void god_mode(void)
+void move_to_end_pos(int tile)
 {
-    int tile = 1;
-    
-    // finds tile and end position
+     // finds tile and end position
     struct coord tilePos = findPosition(tile);
     struct coord endTilePos = findEndPosition(tile);
     
+    // Move to either same row or column
     while (tilePos.row != endTilePos.row && tilePos.column != endTilePos.column)
     {
         move_diagonal(tile);
         tilePos = findPosition(tile);
     }
     
+    // Move to correct row
     while (tilePos.row != endTilePos.row)
     {
         move_vertical(tile);
         tilePos = findPosition(tile);
     }
     
+    // Move to correct column
     while (tilePos.column != endTilePos.column)
     {
         move_horizontal(tile);
         tilePos = findPosition(tile);
+    }
+}
+
+/**
+ * God mode
+ */
+void god_mode(void)
+{
+    // Get total tiles
+    int total = d * d;
+    
+    // Loop through tiles
+    for (int i = 1; i < 2; i++)
+    {
+        move_to_end_pos(i);
     }
 }
 
