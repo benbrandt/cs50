@@ -46,8 +46,12 @@ void draw(void);
 struct coord findPosition(int tile);
 struct coord findEndPosition(int tile);
 bool move(int tile);
-void move_space(char direction);
+bool move_space(char direction);
 void align (int tile);
+bool move_vertical(int tile);
+bool move_horizontal(int tile);
+bool move_diagonal(int tile);
+void god_mode(void);
 bool won(void);
 
 int main(int argc, string argv[])
@@ -119,7 +123,7 @@ int main(int argc, string argv[])
         // quit if user inputs 0 (for testing)
         if (tile == 0)
         {
-            align(6);
+            god_mode();
             //break;
         }
 
@@ -301,39 +305,45 @@ bool move(int tile)
 /**
  * move space tile in some direction
  */
-void move_space(char direction)
+bool move_space(char direction)
 {
+    bool success;
     struct coord space = findPosition(0);
     
     // Utilize the move function to move space tile
     if (direction == 'u')
     {
-        move(board[space.row - 1][space.column]);
+        success = move(board[space.row - 1][space.column]);
     }
     else if (direction == 'd')
     {
-        move(board[space.row + 1][space.column]);
+        success = move(board[space.row + 1][space.column]);
     }
     else if (direction == 'l')
     {
-        move(board[space.row][space.column - 1]);
+        success = move(board[space.row][space.column - 1]);
     }
     else if (direction == 'r')
     {
-        move(board[space.row][space.column + 1]);
+        success = move(board[space.row][space.column + 1]);
     }
     else {
-        printf("Not a valid move.");
+        success = false;
     }
     
-    // clear the screen
-    clear();
-
-    // draw the current state of the board
-    draw();
+    if (success == true)
+    {
+        // clear the screen
+        clear();
     
-    // sleep thread for animation's sake
-    usleep(50000);
+        // draw the current state of the board
+        draw();
+        
+        // sleep thread for animation's sake
+        usleep(50000);
+    }
+    
+    return success;
 }
 
 /**
@@ -401,11 +411,118 @@ void align (int tile)
         space = findPosition(0);
         tilePos = findPosition(tile);
     }
+}
+
+/**
+ * Move tile vertically
+ */
+bool move_vertical(int tile)
+{
+    // finds tile
+    struct coord tilePos = findPosition(tile);
     
-    // If on left, swap places
-    if (side == -1)
+    // figure out which side the space should be on
+    char side = 'l';
+    if (tilePos.column == d - 1)
     {
+        side = 'r';
+    }
+    
+    if (tilePos.row - 1 >= 0)
+    {
+        align(tile);
+        move_space('u');
+        move_space(side);
         move(tile);
+        
+        return true;
+    }
+    
+    return false;
+}
+
+/**
+ * Move tile horizontally
+ */
+bool move_horizontal(int tile)
+{
+    // finds tile
+    struct coord tilePos = findPosition(tile);
+    
+    // figure out which side the space should be on
+    char side1 = 'u', side2 = 'd';
+    if (tilePos.row == 0)
+    {
+        side1 = 'd';
+        side2 = 'u';
+    }
+    
+    // Move tile to left
+    if (tilePos.column - 1 >= 0)
+    {
+        align(tile);
+        move_space(side1);
+        move_space('l');
+        move_space('l');
+        move_space(side2);
+        move(tile);
+        
+        return true;
+    }
+    
+    return false;
+}
+
+/**
+ * Move tile diagonally
+ */
+bool move_diagonal(int tile)
+{
+    // finds tile
+    struct coord tilePos = findPosition(tile);
+    
+    // Move tile to upper left
+    if (tilePos.row - 1 >= 0 && tilePos.column - 1 >= 0)
+    {
+        bool move1 = move_vertical(tile);
+        bool move2 = move_horizontal(tile);
+        
+        if (move1 && move2)
+        {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+/**
+ * God mode
+ */
+void god_mode(void)
+{
+    int tile = 1;
+    
+    // finds tile and end position
+    struct coord tilePos = findPosition(tile);
+    struct coord endTilePos = findEndPosition(tile);
+    
+    while (tilePos.row != endTilePos.row && tilePos.column != endTilePos.column)
+    {
+        move_diagonal(tile);
+        tilePos = findPosition(tile);
+    }
+    
+    while (tilePos.row != endTilePos.row)
+    {
+        move_vertical(tile);
+        tilePos = findPosition(tile);
+    }
+    
+    while (tilePos.column != endTilePos.column)
+    {
+        move_horizontal(tile);
+        tilePos = findPosition(tile);
     }
 }
 
