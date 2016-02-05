@@ -20,6 +20,7 @@
 #include <cs50.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 // constants
@@ -48,9 +49,9 @@ struct coord findEndPosition(int tile);
 bool move(int tile);
 bool move_space(char direction);
 void align (int tile);
-bool move_vertical(int tile);
-bool move_horizontal(int tile);
-bool move_diagonal(int tile);
+void move_vertical(int tile, char direction);
+void move_horizontal(int tile, char direction);
+void move_diagonal(int tile, int direction);
 void move_to_end_pos(int tile);
 void god_mode(void);
 bool won(void);
@@ -119,24 +120,31 @@ int main(int argc, string argv[])
         
         // prompt for move
         printf("Tile to move: ");
-        int tile = GetInt();
+        string tileInput = GetString();
         
         // quit if user inputs 0 (for testing)
-        if (tile == 0)
+        if (strcmp(tileInput, "GOD") == 0)
         {
             god_mode();
-            //break;
         }
-
-        // log move (for testing)
-        fprintf(file, "%i\n", tile);
-        fflush(file);
-
-        // move if possible, else report illegality
-        if (!move(tile))
+        else
         {
-            printf("\nIllegal move.\n");
-            usleep(50000);
+            int tile = atoi(tileInput);
+            if (tile == 0)
+            {
+                break;
+            }
+    
+            // log move (for testing)
+            fprintf(file, "%i\n", tile);
+            fflush(file);
+    
+            // move if possible, else report illegality
+            if (!move(tile))
+            {
+                printf("\nIllegal move.\n");
+                usleep(50000);
+            }
         }
 
         // sleep thread for animation's sake
@@ -417,7 +425,7 @@ void align (int tile)
 /**
  * Move tile vertically
  */
-bool move_vertical(int tile)
+void move_vertical(int tile, char direction)
 {
     // finds tile
     struct coord tilePos = findPosition(tile);
@@ -428,24 +436,17 @@ bool move_vertical(int tile)
     {
         side = 'r';
     }
-    
-    if (tilePos.row - 1 >= 0)
-    {
-        align(tile);
-        move_space('u');
-        move_space(side);
-        move(tile);
-        
-        return true;
-    }
-    
-    return false;
+
+    align(tile);
+    move_space(direction);
+    move_space(side);
+    move(tile);
 }
 
 /**
  * Move tile horizontally
  */
-bool move_horizontal(int tile)
+void move_horizontal(int tile, char direction)
 {
     // finds tile
     struct coord tilePos = findPosition(tile);
@@ -458,43 +459,63 @@ bool move_horizontal(int tile)
         side2 = 'u';
     }
     
-    // Move tile to left
-    if (tilePos.column - 1 >= 0)
-    {
-        align(tile);
-        move_space(side1);
-        move_space('l');
-        move_space('l');
-        move_space(side2);
-        move(tile);
-        
-        return true;
-    }
-    
-    return false;
+    align(tile);
+    move_space(side1);
+    move_space(direction);
+    move_space(direction);
+    move_space(side2);
+    move(tile);
 }
 
 /**
  * Move tile diagonally
  */
-bool move_diagonal(int tile)
+void move_diagonal(int tile, int direction)
 {
     // finds tile
     struct coord tilePos = findPosition(tile);
     
-    // Move tile to upper left
-    if (tilePos.row - 1 >= 0 && tilePos.column - 1 >= 0)
+    switch (direction)
     {
-        bool move1 = move_vertical(tile);
-        bool move2 = move_horizontal(tile);
+        // Move tile to upper left
+        case 1:
+            if (tilePos.row - 1 >= 0 && tilePos.column - 1 >= 0)
+            {
+                move_vertical(tile, 'u');
+                move_horizontal(tile, 'l');
+            }
+            break;
+            
+        // Move tile to upper right
+        case 2:
+            if (tilePos.row - 1 >= 0 && tilePos.column + 1 < d)
+            {
+                move_vertical(tile, 'u');
+                move_horizontal(tile, 'r');
+            }
+            break;
+            
+        // Move tile to lower left
+        case 3:
+            if (tilePos.row + 1 < d && tilePos.column - 1 >= 0)
+            {
+                move_vertical(tile, 'd');
+                move_horizontal(tile, 'l');
+            }
+            break;
         
-        if (move1 && move2)
-        {
-            return true;
-        }
+        // Move tile to lower right
+        case 4:
+            if (tilePos.row + 1 < d && tilePos.column + 1 < d)
+            {
+                move_vertical(tile, 'd');
+                move_horizontal(tile, 'r');
+            }
+            break;
+        
+        default:
+            break;
     }
-    
-    return false;
 }
 
 /**
@@ -506,24 +527,42 @@ void move_to_end_pos(int tile)
     struct coord tilePos = findPosition(tile);
     struct coord endTilePos = findEndPosition(tile);
     
+    // Direction to head
+    char rowDir = (endTilePos.row - tilePos.row > 0) ? 'd' : 'u';
+    char columnDir = (endTilePos.column - tilePos.column > 0) ? 'r' : 'l';
+    
+    int diagDir = 1;
+    if (rowDir == 'u' && columnDir == 'r')
+    {
+        diagDir = 2;
+    }
+    else if (rowDir == 'd' && columnDir == 'l')
+    {
+        diagDir = 3;
+    }
+    else if (rowDir == 'd' && columnDir == 'r')
+    {
+        diagDir = 1;
+    }
+    
     // Move to either same row or column
     while (tilePos.row != endTilePos.row && tilePos.column != endTilePos.column)
     {
-        move_diagonal(tile);
+        move_diagonal(tile, diagDir);
         tilePos = findPosition(tile);
     }
     
     // Move to correct row
     while (tilePos.row != endTilePos.row)
     {
-        move_vertical(tile);
+        move_vertical(tile, rowDir);
         tilePos = findPosition(tile);
     }
     
     // Move to correct column
     while (tilePos.column != endTilePos.column)
     {
-        move_horizontal(tile);
+        move_horizontal(tile, columnDir);
         tilePos = findPosition(tile);
     }
 }
@@ -534,10 +573,10 @@ void move_to_end_pos(int tile)
 void god_mode(void)
 {
     // Get total tiles
-    int total = d * d;
+    //int total = d * d;
     
     // Loop through tiles
-    for (int i = 1; i < 2; i++)
+    for (int i = 1; i < 3; i++)
     {
         move_to_end_pos(i);
     }
