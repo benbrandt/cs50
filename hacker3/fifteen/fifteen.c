@@ -451,7 +451,9 @@ void move_vertical(int tile, char direction)
  */
 void move_horizontal(int tile, char direction)
 {
-    // finds tile
+    // finds tile and space
+    align(tile);
+    struct coord spacePos = findPosition(0);
     struct coord tilePos = findPosition(tile);
     
     // figure out which side the space should be on
@@ -462,12 +464,19 @@ void move_horizontal(int tile, char direction)
         side2 = 'u';
     }
     
-    align(tile);
-    move_space(side1);
-    move_space(direction);
-    move_space(direction);
-    move_space(side2);
-    move(tile);
+    if ((direction == 'l' && spacePos.column == tilePos.column - 1) ||
+        (direction == 'r' && spacePos.column == tilePos.column + 1))
+    {
+        move(tile);
+    }
+    else
+    {
+        move_space(side1);
+        move_space(direction);
+        move_space(direction);
+        move_space(side2);
+        move(tile);
+    }
 }
 
 /**
@@ -549,15 +558,16 @@ void move_to_end_pos(int tile)
     }
     
     // Move to either same row or column
-    while (tilePos.row != endTilePos.row && tilePos.column != endTilePos.column)
-    {
-        move_diagonal(tile, diagDir);
-        tilePos = findPosition(tile);
-    }
+    // while (tilePos.row != endTilePos.row && tilePos.column != endTilePos.column)
+    // {
+    //     move_diagonal(tile, diagDir);
+    //     tilePos = findPosition(tile);
+    // }
     
     // Move to correct row
     while (tilePos.row != endTilePos.row)
     {
+        rowDir = (endTilePos.row - tilePos.row > 0) ? 'd' : 'u';
         move_vertical(tile, rowDir);
         tilePos = findPosition(tile);
     }
@@ -565,6 +575,7 @@ void move_to_end_pos(int tile)
     // Move to correct column
     while (tilePos.column != endTilePos.column)
     {
+        columnDir = (endTilePos.column - tilePos.column > 0) ? 'r' : 'l';
         move_horizontal(tile, columnDir);
         tilePos = findPosition(tile);
     }
@@ -579,9 +590,12 @@ void god_mode(void)
     //int total = d * d;
     
     // Loop through tiles
-    for (int i = 1; i < 3; i++)
+    for (int i = 1; i < 4; i++)
     {
-        move_to_end_pos(i);
+        for (int j = i; j > 0; j--)
+        {
+            move_to_end_pos(j);
+        }
     }
 }
 
