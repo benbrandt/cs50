@@ -320,24 +320,27 @@ bool move_space(char direction)
     struct coord space = findPosition(0);
     
     // Utilize the move function to move space tile
-    if (direction == 'u')
+    switch (direction)
     {
-        success = move(board[space.row - 1][space.column]);
-    }
-    else if (direction == 'd')
-    {
-        success = move(board[space.row + 1][space.column]);
-    }
-    else if (direction == 'l')
-    {
-        success = move(board[space.row][space.column - 1]);
-    }
-    else if (direction == 'r')
-    {
-        success = move(board[space.row][space.column + 1]);
-    }
-    else {
-        success = false;
+        case 'u':
+            success = move(board[space.row - 1][space.column]);
+            break;
+            
+        case 'd':
+            success = move(board[space.row + 1][space.column]);
+            break;
+            
+        case 'l':
+            success = move(board[space.row][space.column - 1]);
+            break;
+
+        case 'r':
+            success = move(board[space.row][space.column + 1]);
+            break;
+
+        default:
+            success = false;
+            break;
     }
     
     if (success == true)
