@@ -558,16 +558,15 @@ void move_to_end_pos(int tile)
     }
     
     // Move to either same row or column
-    // while (tilePos.row != endTilePos.row && tilePos.column != endTilePos.column)
-    // {
-    //     move_diagonal(tile, diagDir);
-    //     tilePos = findPosition(tile);
-    // }
+    while (tilePos.row != endTilePos.row && tilePos.column != endTilePos.column)
+    {
+        move_diagonal(tile, diagDir);
+        tilePos = findPosition(tile);
+    }
     
     // Move to correct row
     while (tilePos.row != endTilePos.row)
     {
-        rowDir = (endTilePos.row - tilePos.row > 0) ? 'd' : 'u';
         move_vertical(tile, rowDir);
         tilePos = findPosition(tile);
     }
@@ -575,7 +574,6 @@ void move_to_end_pos(int tile)
     // Move to correct column
     while (tilePos.column != endTilePos.column)
     {
-        columnDir = (endTilePos.column - tilePos.column > 0) ? 'r' : 'l';
         move_horizontal(tile, columnDir);
         tilePos = findPosition(tile);
     }
