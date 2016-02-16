@@ -1,0 +1,41 @@
+0.  How many colors does each format support?
+An 8bit BMP holds 256 colors, but a 24bit BMP can hold 16.8million colors.
+GIF has a maximum of 256 colors.
+BMP, JPEG, and PNG can be up to 24 bit (16.8million colors)
+
+1.  Which of the formats supports animation?
+GIF
+
+2.  What is the difference between lossy and lossless compression?
+Lossy makes inexact approximations about the data in the image to save on file 
+size, but it can degrade the image. Lossless compression will allow you to 
+perfectly reconstruct the original image, but can be much larger.
+
+3.  Which of these formats is lossy compressed?
+JPEG
+
+4.  What happens, technically speaking, when a file is deleted on a FAT file 
+system?
+The system modifies the filename's first character to signal it has been deleted
+and the space can be recycled. Then it moves the file cluster to the hard
+drive's "free cluster" area, but doesn't actually do anything with the cluster 
+itself.
+
+5.  What can someone like you do to ensure (with high probability) that files
+you delete cannot be recovered?
+Use a tool to write zeros or a random sequance of values in every block of the
+hard drive.
+
+6.  TODO
+7.  TODO
+8.  TODO
+9.  TODO
+10. TODO
+11. TODO
+12. TODO
+13. TODO
+14. TODO
+15. TODO
+16. TODO
+17. TODO
+18. TODO
