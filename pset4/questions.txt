@@ -26,16 +26,50 @@ you delete cannot be recovered?
 Use a tool to write zeros or a random sequance of values in every block of the
 hard drive.
 
-6.  TODO
-7.  TODO
-8.  TODO
-9.  TODO
-10. TODO
-11. TODO
-12. TODO
-13. TODO
-14. TODO
-15. TODO
-16. TODO
-17. TODO
+6.  What’s stdint.h?
+A header file with a set of fixed width ints, to allow for specific bit lengths 
+of values in areas where that is important, such as file format headers.
+
+7.  What’s the point of using uint8_t, uint32_t, int32_t, and uint16_t in a 
+program?
+To set aside a certain amount of memory for an int, as opposed to the normal 4
+bytes.
+
+8.  How many bytes is a BYTE, a DWORD, a LONG, and a WORD, respectively?
+A BYTE is 8, a WORD is 32, a LONG is 32, and a WORD is 16
+
+9.  What (in ASCII, decimal, or hexadecimal) must the first two bytes of any BMP
+file be? (Leading bytes used to identify file formats (with high probability)
+are generally called "magic numbers.)"
+BM
+
+10. What’s the difference between bfSize and biSize?
+bfSize is the size in bytes in the bitmap, and biSize is the number of bytes
+required by the structure.
+
+11. What does it mean if biHeight is negative?
+If biHeight is negative, the bitmap is a top-downand its origin is  in the 
+upper-left corner.
+
+12. What field in BITMAPINFOHEADER specifies the BMP’s color depth 
+(i.e., bits per pixel)?
+biBitCount
+
+13. Why might fopen return NULL in copy.c:37?
+The file might not exist or be unable to be written to.
+
+14. Why is the third argument to fread always 1 in our code?
+We are reading the files one struct at a time.
+
+15. What value does copy.c:70 assign padding if bi.biWidth is 3?
+3
+
+16. What does fseek do?
+Sets your position in the file forward by the offset you specify either from the
+beginning of the file, your current position, or the end of the file, whichever
+you choose.
+
+17. What is SEEK_CUR?
+Your current position in the file.
+
 18. TODO
