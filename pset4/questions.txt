@@ -72,4 +72,5 @@ you choose.
 17. What is SEEK_CUR?
 Your current position in the file.
 
-18. TODO
+18. Whodunit?
+Jason Hirschhorn
