@@ -84,7 +84,8 @@ int main(int argc, char* argv[])
     int newPadding =  (4 - (out_bi.biWidth * sizeof(RGBTRIPLE)) % 4) % 4;
     
     // Update size in Bitmap info header
-    out_bi.biSizeImage = (out_bi.biWidth + newPadding) * abs(out_bi.biHeight);
+    out_bi.biSizeImage = out_bi.biWidth * abs(out_bi.biHeight) * 
+        sizeof(RGBTRIPLE) + newPadding * abs(out_bi.biHeight);
     
     // Update Size in Bitmap File Header
     out_bf.bfSize = out_bf.bfOffBits + out_bi.biSizeImage;
