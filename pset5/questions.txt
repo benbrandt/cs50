@@ -1,10 +1,19 @@
-0.  TODO
-1.  TODO
-2.  TODO
-3.  TODO
-4.  TODO
-5.  TODO
-6.  TODO
+0.  A lung disease that is otherwise known as silicosis
+1.  Returns resource usage for particular thread(s).
+2.  16
+3.  Since it is being called in a function, we pass in the pointer so we can 
+    save the return value outside of the function call.
+4.  Main loads the dictionary into memory, as well as the text to check. Then 
+    it reads the text one character at a time, It checks if the character is a 
+    letter or a ' (if we're already inside of a word) and adds that letter to
+    the word. If the word is longer than 45 character, we read the rest of the 
+    word and move on. If the word has a digit in it, we also discard the word.
+    Once we hit any other character, the word is complete, we add the null
+    character at the end, increment our word count, check if the word is
+    mispelled, and print it to the terminal if so.
+5.  fscanf might try and write a word longer than our maximum length to our
+    array.
+6.  Because we aren't changing their values.
 7.  TODO
 8.  TODO
 9.  TODO
