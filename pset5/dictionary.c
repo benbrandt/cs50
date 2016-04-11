@@ -8,8 +8,22 @@
  */
 
 #include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "dictionary.h"
+
+// Node Definition
+typedef struct node
+{
+    bool is_word;
+    struct node* children[27];
+}
+node;
+
+// Root Node
+node* root;
+
 
 /**
  * Returns true if word is in dictionary else false.
@@ -25,8 +39,59 @@ bool check(const char* word)
  */
 bool load(const char* dictionary)
 {
-    // TODO
-    return false;
+    // Create space for root
+    root = malloc(sizeof(node));
+    
+    // Read dictionary
+    FILE* fp = fopen(dictionary, "r");
+    if (fp == NULL)
+    {
+        printf("Could not open %s.\n", dictionary);
+        unload();
+        return false;
+    }
+    
+    // Set cursor to root
+    node* cursor = root;
+    
+    // Read each character in dictionary
+    for (int c = fgetc(fp); c != EOF; c = fgetc(fp))
+    {
+        // Check if newline
+        if (c == '\n') 
+        {
+            // mark as word
+            cursor->is_word = true;
+            
+            // reset cursor to root to traverse trie again
+            cursor = root;
+        }
+        else 
+        {
+            // Find the index of the letter
+            int index = 0;
+            
+            if (c == '\'') 
+            {
+                index = 26;    
+            }
+            else {
+                index = c % 'a';
+            }
+            
+            // Check if node exists for letter
+            if (cursor->children[index] == NULL) 
+            {
+                // Create new node
+                cursor->children[index] = malloc(sizeof(node));
+            }
+
+            // Move to next node
+            cursor = cursor->children[index];
+        }
+    }
+    
+    return true;
 }
 
 /**
