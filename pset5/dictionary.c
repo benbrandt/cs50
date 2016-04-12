@@ -25,6 +25,9 @@ node;
 // Root Node
 node* root;
 
+// Size of trie
+unsigned int number_of_nodes = 0;
+
 /**
  * Returns index of letter within trie array
  */
@@ -74,6 +77,9 @@ bool load(const char* dictionary)
     // Create space for root
     root = malloc(sizeof(node));
     
+    // Initialize number of nodes
+    number_of_nodes = 0;
+    
     // Read dictionary
     FILE* fp = fopen(dictionary, "r");
     if (fp == NULL)
@@ -94,6 +100,9 @@ bool load(const char* dictionary)
         {
             // mark as word
             cursor->is_word = true;
+            
+            // Increment number of nodes
+            number_of_nodes++;
             
             // reset cursor to root to traverse trie again
             cursor = root;
@@ -123,8 +132,7 @@ bool load(const char* dictionary)
  */
 unsigned int size(void)
 {
-    // TODO
-    return 0;
+    return number_of_nodes;
 }
 
 /**
