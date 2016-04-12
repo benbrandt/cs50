@@ -7,6 +7,7 @@
  * Implements a dictionary's functionality.
  */
 
+#include <ctype.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,6 +25,18 @@ node;
 // Root Node
 node* root;
 
+/**
+ * Returns index of letter within trie array
+ */
+int getIndex(const char c) {
+    if (c == '\'') 
+    {
+        return 26;    
+    }
+    else {
+        return tolower(c) % 'a';
+    }
+}
 
 /**
  * Returns true if word is in dictionary else false.
@@ -69,15 +82,7 @@ bool load(const char* dictionary)
         else 
         {
             // Find the index of the letter
-            int index = 0;
-            
-            if (c == '\'') 
-            {
-                index = 26;    
-            }
-            else {
-                index = c % 'a';
-            }
+            int index = getIndex(c);
             
             // Check if node exists for letter
             if (cursor->children[index] == NULL) 
