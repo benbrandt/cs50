@@ -26,17 +26,19 @@ node;
 node* root;
 
 // Size of trie
-unsigned int number_of_nodes = 0;
+unsigned int total_nodes = 0;
 
 /**
  * Returns index of letter within trie array
  */
-int getIndex(const char c) {
+int getIndex(const char c)
+{
     if (c == '\'') 
     {
         return 26;    
     }
-    else {
+    else 
+    {
         return tolower(c) % 'a';
     }
 }
@@ -79,7 +81,7 @@ bool load(const char* dictionary)
     root = malloc(sizeof(node));
     
     // Initialize number of nodes
-    number_of_nodes = 0;
+    total_nodes = 0;
     
     // Read dictionary
     FILE* fp = fopen(dictionary, "r");
@@ -103,7 +105,7 @@ bool load(const char* dictionary)
             cursor->is_word = true;
             
             // Increment number of nodes
-            number_of_nodes++;
+            total_nodes++;
             
             // reset cursor to root to traverse trie again
             cursor = root;
@@ -136,20 +138,21 @@ bool load(const char* dictionary)
  */
 unsigned int size(void)
 {
-    return number_of_nodes;
+    return total_nodes;
 }
 
 /**
  * Check node children to see if they can be freed
  */
-bool free_children(node* ptr)
+bool free_nodes(node* ptr)
 {
     // Go through node's children
     for (int i = 0; i < 27; i++)
     {
         // If child is pointer, recursively check that one as well
-        if (ptr->children[i] != NULL) {
-            free_children(ptr->children[i]);
+        if (ptr->children[i] != NULL) 
+        {
+            free_nodes(ptr->children[i]);
         }
     }
     
@@ -165,5 +168,5 @@ bool free_children(node* ptr)
 bool unload(void)
 {
     // Start at root
-    return free_children(root);
+    return free_nodes(root);
 }
