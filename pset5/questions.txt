@@ -14,7 +14,15 @@
 5.  fscanf might try and write a word longer than our maximum length to our
     array.
 6.  Because we aren't changing their values.
-7.  TODO
-8.  TODO
-9.  TODO
-10. TODO
+7.  The spell checker is built with a trie data structure, which each node
+    contains a boolean value if the current node represents the end of a word, 
+    and an array of node pointers representing the 26 letters and an apostrophe.
+8.  My load time is usually around 0.12s for the large dictionary, but I forgot
+    to turn off the unload error earlier so I wasn't getting times before that.
+9.  I'm not really sure what else I can do to improve the performance at this
+    point since the trie structure already seems pretty efficient. Since it is 
+    able to check the entire War and Peace document in about .5s, it seems to be
+    performant enough at the moment.
+10. At the moment I think most of the bottlenecks are in the file i/o and node
+    creation segments. I could potentially look into more efficient ways of
+    storing info to improve the speed.
