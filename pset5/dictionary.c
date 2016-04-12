@@ -43,8 +43,27 @@ int getIndex(const char c) {
  */
 bool check(const char* word)
 {
-    // TODO
-    return false;
+    // Set cursor to root
+    node* cursor = root;
+    
+    // for each letter in input word
+    for (int i = 0; word[i] != '\0'; i++) {
+        // Find the index of the letter
+        int index = getIndex(word[i]);
+        
+        // got to corresponding element in children
+        if (cursor->children[index] == NULL) 
+        {
+            // if NULL word is mispelled
+            return false;
+        }
+        
+        // if not NULL, move to next letter
+        cursor = cursor->children[index];
+    }
+    
+    // once at end of input word, check if is_word is true
+    return cursor->is_word;
 }
 
 /**
