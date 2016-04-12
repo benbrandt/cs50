@@ -50,7 +50,8 @@ bool check(const char* word)
     node* cursor = root;
     
     // for each letter in input word
-    for (int i = 0; word[i] != '\0'; i++) {
+    for (int i = 0; word[i] != '\0'; i++) 
+    {
         // Find the index of the letter
         int index = getIndex(word[i]);
         
@@ -124,6 +125,9 @@ bool load(const char* dictionary)
         }
     }
     
+    // Close dictionary
+    fclose(fp);
+    
     return true;
 }
 
@@ -136,10 +140,30 @@ unsigned int size(void)
 }
 
 /**
+ * Check node children to see if they can be freed
+ */
+bool free_children(node* ptr)
+{
+    // Go through node's children
+    for (int i = 0; i < 27; i++)
+    {
+        // If child is pointer, recursively check that one as well
+        if (ptr->children[i] != NULL) {
+            free_children(ptr->children[i]);
+        }
+    }
+    
+    // If all chilren are null, free node
+    free(ptr);
+    
+    return true;
+}
+
+/**
  * Unloads dictionary from memory.  Returns true if successful else false.
  */
 bool unload(void)
 {
-    // TODO
-    return false;
+    // Start at root
+    return free_children(root);
 }
