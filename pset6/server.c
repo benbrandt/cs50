@@ -619,41 +619,38 @@ bool load(FILE* file, BYTE** content, size_t* length)
 const char* lookup(const char* path)
 {
     // Save final characters of path
-    int len = strlen(path);
-    const char* last_three = &path[len - 4];
-    const char* last_four = &path[len - 5];
-    const char* last_five = &path[len - 6];
+    char* file_type = strchr(path, '.');
     
     // Check file types
-    if (strcasecmp(last_four, ".css") == 0)
+    if (strcasecmp(file_type, ".css") == 0)
     {
         return "text/css";
     }
-    else if (strcasecmp(last_five, ".html") == 0)
+    else if (strcasecmp(file_type, ".html") == 0)
     {
         return "text/html";
     }
-    else if (strcasecmp(last_four, ".gif") == 0)
+    else if (strcasecmp(file_type, ".gif") == 0)
     {
         return "image/gif";
     }
-    else if (strcasecmp(last_four, ".ico") == 0)
+    else if (strcasecmp(file_type, ".ico") == 0)
     {
         return "image/x-icon";
     }
-    else if (strcasecmp(last_four, ".jpg") == 0)
+    else if (strcasecmp(file_type, ".jpg") == 0)
     {
         return "image/jpeg";
     }
-    else if (strcasecmp(last_three, ".js") == 0)
+    else if (strcasecmp(file_type, ".js") == 0)
     {
         return "text/javascript";
     }
-    else if (strcasecmp(last_four, ".php") == 0)
+    else if (strcasecmp(file_type, ".php") == 0)
     {
         return "text/x-php";
     }
-    else if (strcasecmp(last_four, ".png") == 0)
+    else if (strcasecmp(file_type, ".png") == 0)
     {
         return "image/png";
     }
