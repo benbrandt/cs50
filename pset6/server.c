@@ -444,7 +444,29 @@ char* htmlspecialchars(const char* s)
  */
 char* indexes(const char* path)
 {
-    // TODO
+    // Setup New Path
+    int path_length = strlen(path);
+    char* new_path = (char*) malloc(sizeof(char) * (path_length + 11));
+    
+    // Check index.php
+    strcpy(new_path, path);
+    strcat(new_path, "index.php");
+    
+    if (access(new_path, F_OK) == 0)
+    {
+        return new_path;
+    }
+    
+    // Check index.php
+    strcpy(new_path, path);
+    strcat(new_path, "index.html");
+    
+    if (access(new_path, F_OK) == 0)
+    {
+        return new_path;
+    }
+    
+    free(new_path);
     return NULL;
 }
 
@@ -609,8 +631,64 @@ void list(const char* path)
  */
 bool load(FILE* file, BYTE** content, size_t* length)
 {
-    // TODO
-    return false;
+     // growable buffer for chars
+    char* buffer = NULL;
+
+    // capacity of buffer
+    unsigned int capacity = 0;
+
+    // number of chars actually in buffer
+    unsigned int n = 0;
+
+    // character read or EOF
+    int c;
+
+    // iteratively get chars from standard input
+    while ((c = fgetc(file)) != EOF)
+    {
+        // grow buffer if necessary
+        if (n + 1 > capacity)
+        {
+            // determine new capacity: start at 512 for images then double
+            if (capacity == 0)
+            {
+                capacity = 512;
+            }
+            else if (capacity <= (UINT_MAX / 2))
+            {
+                capacity += 512;
+            }
+            else
+            {
+                free(buffer);
+                return NULL;
+            }
+
+            // extend buffer's capacity
+            char* temp = realloc(buffer, capacity * sizeof(char));
+            if (temp == NULL)
+            {
+                free(buffer);
+                return NULL;
+            }
+            buffer = temp;
+        }
+
+        // append current character to buffer
+        buffer[n++] = c;
+    }
+
+    // return NULL if user provided no input
+    if (n == 0 && c == EOF)
+    {
+        return false;
+    }
+
+    // return string
+    *content = buffer;
+    *length = n;
+    
+    return true;
 }
 
 /**
@@ -665,9 +743,109 @@ const char* lookup(const char* path)
  */
 bool parse(const char* line, char* abs_path, char* query)
 {
-    // TODO
-    error(501);
-    return false;
+    // Find pointers to spaces
+    char* sp1 = strchr(line, ' ');
+    int len1 = sp1 - line;
+    if (sp1 == NULL || len1 == 0)
+    {
+        error(400);
+        return false;
+    }
+    
+    char* sp2 = strchr(sp1 + 1, ' ');
+    int len2 = sp2 - (sp1 + 1);
+    if (sp2 == NULL || len2 == 0)
+    {
+        error(400);
+        return false;
+    }
+    
+    char* crlf = strstr(sp2 + 1, "\r\n");
+    int len3 = crlf - (sp2 + 1);
+    if (crlf == NULL || crlf == 0)
+    {
+        error(400);
+        return false;
+    }
+    
+    // Save vars
+    char* method = (char*) malloc(sizeof(char) * (len1 + 1));
+    strncpy(method, line, len1);
+    method[len1] = '\0';
+    
+    char* request_target = (char*) malloc(sizeof(char) * (len2 + 1));
+    strncpy(request_target, sp1 + 1, len2);
+    request_target[len2] = '\0';
+    
+    char* HTTP_version = (char*) malloc(sizeof(char) * (len3 + 1));
+    strncpy(HTTP_version, sp2 + 1, len3);
+    HTTP_version[len3] = '\0';
+    
+    // Check method
+    if (strcmp(method, "GET") != 0)
+    {
+        error(405);
+        free(method);
+        free(request_target);
+        free(HTTP_version);
+        return false;
+    }
+    
+    // Check request method
+    if (request_target[0] != '/')
+    {
+        error(501);
+        free(method);
+        free(request_target);
+        free(HTTP_version);
+        return false;
+    }
+    
+    if (strchr(request_target, '"') != NULL)
+    {
+        error(400);
+        free(method);
+        free(request_target);
+        free(HTTP_version);
+        return false;
+    }
+    
+    // Check HTTP Version
+    if (strcmp(HTTP_version, "HTTP/1.1") != 0)
+    {
+        error(505);
+        free(method);
+        free(request_target);
+        free(HTTP_version);
+        return false;
+    }
+    
+    // Process Request Target
+    char* query_start = strchr(request_target, '?');
+    
+    if (query_start != NULL)
+    {
+        int query_len = strlen(query_start);
+        char* query_param = (char*) malloc(sizeof(char) * query_len);
+        strncpy(query_param, query_start + 1, query_len - 1);
+        query_param[query_len] = '\0';
+        
+        strncpy(abs_path, request_target, len2 - query_len);
+        strcpy(query, query_param);
+        
+        free(query_param);
+    } 
+    else 
+    {
+        strcpy(abs_path, request_target);
+        *query = '\0';
+    }
+    
+    free(method);
+    free(request_target);
+    free(HTTP_version);
+
+    return true;
 }
 
 /**
