@@ -2,7 +2,7 @@
     <div class="alert alert-success" role="alert">
         <strong><?= htmlspecialchars($stock["symbol"]) ?></strong> 
         <?= htmlspecialchars($stock["name"]) ?> 
-        <?= trim_zeroes(number_format($stock["price"], 4)) ?>
+        <?= trim_zeroes($stock["price"]) ?>
     </div>
 <?php endif ?>
 
