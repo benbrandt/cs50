@@ -18,12 +18,12 @@ else if ($_SERVER["REQUEST_METHOD"] == "POST")
     if ($stock !== false)
     {
         // render stock info
-        render("quote_form.php", ["title" => "Get Quote", "stock" => $stock]);
+        render("quote.php", ["title" => "Get Quote", "stock" => $stock]);
     }
     
     // Render error
     else
     {
-        render("quote_form.php", ["title" => "Get Quote", "error" => "No stock info for {$_POST["symbol"]}. Try again."]);
+        render("quote.php", ["title" => "Get Quote", "error" => "No stock info for {$_POST["symbol"]}. Try again."]);
     }
 }
