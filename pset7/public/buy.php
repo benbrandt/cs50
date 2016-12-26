@@ -55,6 +55,13 @@ else if ($_SERVER["REQUEST_METHOD"] == "POST")
                 $stock["symbol"],
                 $_POST["shares"]
             );
+            $log = $insert = CS50::query(
+                "INSERT IGNORE INTO history (user_id, symbol, shares, price, transaction) VALUES(?, ?, ?, ?, 'BOUGHT')", 
+                $_SESSION["id"], 
+                $stock["symbol"],
+                $_POST["shares"],
+                $stock["price"]
+            );
             
             if ($insert === 0) 
             {

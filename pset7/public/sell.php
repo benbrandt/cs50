@@ -26,6 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET")
 else if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
     // Get shares of current stock
+    $stock = lookup($_POST["symbol"]);
     $rows = CS50::query("SELECT shares FROM portfolios WHERE user_id = ? AND symbol = ?", $_SESSION["id"], $_POST["symbol"]);
     
     if (count($rows) == 1) {
@@ -36,6 +37,13 @@ else if ($_SERVER["REQUEST_METHOD"] == "POST")
         
         // Delete the row
         $delete = CS50::query("DELETE FROM portfolios WHERE user_id = ? AND symbol = ?", $_SESSION["id"], $_POST["symbol"]);
+        $log = $insert = CS50::query(
+            "INSERT IGNORE INTO history (user_id, symbol, shares, price, transaction) VALUES(?, ?, ?, ?, 'SOLD')", 
+            $_SESSION["id"], 
+            $_POST["symbol"],
+            $shares,
+            $stock["price"]
+        );
         
         // Render error
         if ($delete == 0)
@@ -51,7 +59,6 @@ else if ($_SERVER["REQUEST_METHOD"] == "POST")
         else 
         {
             // Update Cash
-            $stock = lookup($_POST["symbol"]);
             $new_cash = $stock["price"] * $shares;
             $update = CS50::query("UPDATE users SET cash = cash + ? WHERE id = ?", $new_cash, $_SESSION["id"]);
             
