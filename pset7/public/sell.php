@@ -66,7 +66,7 @@ else if ($_SERVER["REQUEST_METHOD"] == "POST")
             }
             
             // render stock info
-            render("sell.php", ["title" => "Sell Shares", "cash" => $cash]);
+            render("balance.php", ["title" => "Sell Shares", "cash" => $cash]);
         }
     }
 }
