@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>form-0</title>
+    </head>
+    <body>
+        <form action="register.php" method="get">
+            Email: <input name="email" type="email"/>
+            <br>
+            Password: <input name="password" type="password"/>
+            <br>
+            Password (again): <input name="confirmation" type="password"/>
+            <br>
+            I agree to the terms and conditions: <input name="agreement" type="checkbox"/>
+            <br><br>
+            <input type="submit" value="Register"/>
+        </form>
+        <script>
+            var form = document.getElementById('registration');
+            
+            form.onsubmit = function() {
+                if (form.email.value == '')
+                {
+                    alert('You must provide your email address!');
+                    return false;
+                }
+                
+                else if (form.password.value == '')
+                {
+                    alert('You must provide a password!');
+                    return false;
+                }
+                
+                else if (form.password.value != form.confirmation.value)
+                {
+                    alert('Passwords do no match!');
+                    return false;
+                }
+                
+                else if (!form.agreement.checked)
+                {
+                    alert('You must agree to the terms and conditions!');
+                    return false;
+                }
+                
+                return true;
+            };
+        </script>
+    </body>
+</html>
