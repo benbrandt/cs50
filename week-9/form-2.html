@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+        <script>
+            $(document).ready(function() {
+               $('#registration').submit(function() {
+                  if ($('#registration input[name=email]').val() == '')
+                  {
+                      alert('You must provide your email address!');
+                      return false;
+                  }
+                  
+                  else if ($('#registration input[name=password]').val() == '')
+                  {
+                      alert('You must provide a password!');
+                      return false;
+                  }
+                  
+                  else if ($('#registration input[name=password]').val() != $('#registration input[name=confirmation]').val())
+                  {
+                      alert('Passwords do not match!');
+                      return false;
+                  }
+                  
+                  else if (!$('#registration input[name=agreement]').is(':checked'))
+                  {
+                      alert('You must agree to the terms and conditions!');
+                      return false;
+                  }
+                  
+                  return true;
+               });
+            });
+        </script>
+        <title>form-2</title>
+    </head>
+    <body>
+        <form action="register.php" method="get">
+            Email: <input name="email" type="email"/>
+            <br>
+            Password: <input name="password" type="password"/>
+            <br>
+            Password (again): <input name="confirmation" type="password"/>
+            <br>
+            I agree to the terms and conditions: <input name="agreement" type="checkbox"/>
+            <br><br>
+            <input type="submit" value="Register"/>
+        </form>
+    </body>
+</html>
