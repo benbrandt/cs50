@@ -74,13 +74,14 @@ $(function() {
  */
 function addMarker(place)
 {
-    var marker = new google.maps.Marker({
+    var marker = new MarkerWithLabel({
         position: { 
             lat: Number(place.latitude), 
             lng: Number(place.longitude) 
         },
         map: map,
-        label: place.place_name
+        labelContent: place.place_name,
+        labelAnchor: new google.maps.Point(22, 0),
     });
     
     marker.addListener('click', function() {
@@ -196,7 +197,11 @@ function hideInfo()
  */
 function removeMarkers()
 {
-    // TODO
+    for (var i = 0; i < markers.length; i++) {
+        markers[i].setMap(null);
+    }
+    
+    markers = [];
 }
 
 /**
