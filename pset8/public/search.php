@@ -6,7 +6,7 @@
     $places = [];
     
     // add wildcard to search terms
-    $query = str_replace(" ", "* ", $_GET["geo"]);
+    $query = str_replace(", ", "*, ", $_GET["geo"]) . "*";
 
     // search database for places matching $_GET["geo"], store in $places
     $places = CS50::query("SELECT * FROM places WHERE MATCH(postal_code, place_name, admin_name1, admin_code1) AGAINST (? IN BOOLEAN MODE)", $query);

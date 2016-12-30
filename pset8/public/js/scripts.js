@@ -48,7 +48,7 @@ $(function() {
     // options for map
     // https://developers.google.com/maps/documentation/javascript/reference#MapOptions
     var options = {
-        center: {lat: 37.4236, lng: -122.1619}, // Stanford, California
+        center: {lat: 42.3770, lng: -71.1256}, // Cambridge, MA
         disableDefaultUI: true,
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         maxZoom: 14,
@@ -74,7 +74,44 @@ $(function() {
  */
 function addMarker(place)
 {
-    // TODO
+    var marker = new google.maps.Marker({
+        position: { 
+            lat: Number(place.latitude), 
+            lng: Number(place.longitude) 
+        },
+        map: map,
+        label: place.place_name
+    });
+    
+    marker.addListener('click', function() {
+        showInfo(marker);
+        
+        // get places matching query (asynchronously)
+        var parameters = {
+            geo: place.postal_code
+        };
+        $.getJSON("articles.php", parameters)
+        .done(function(data, textStatus, jqXHR) {
+            var output;
+            
+            if (data !== []) {
+                output = "<ul>";
+                
+                for (var item of data) {
+                    output += "<li><a href='" + item.link + "'>" + item.title + "</a></li>";
+                }
+                
+                output += "</ul>";
+            }
+            showInfo(marker, output);
+        })
+        .fail(function(jqXHR, textStatus, errorThrown) {
+            // log error to browser's console
+            console.log(errorThrown.toString());
+        });
+    });
+
+    markers.push(marker);
 }
 
 /**
@@ -108,7 +145,7 @@ function configure()
         source: search,
         templates: {
             empty: "no places found yet",
-            suggestion: _.template("<p><%- suggestion.place_name %>, <%- suggestion.admin_name1 %></p>")
+            suggestion: _.template("<p><%- place_name %>, <%- admin_name1 %> <%- postal_code %></p>")
         }
     });
 
