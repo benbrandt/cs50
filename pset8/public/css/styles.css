@@ -46,6 +46,10 @@ html, body, #map-canvas, .container-fluid
     width: 300px;
 }
 
+.tt-dataset-0 strong {
+    background-color: rgba(255, 255, 0, 0.5);
+}
+
 /* stylize places' labels */
 .label
 {
